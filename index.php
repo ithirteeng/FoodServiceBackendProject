@@ -1,33 +1,30 @@
 <?php
 header('Content-type: application/json');
-$x = '{ 
-    "message": "hello"
-    "sender" : {
-        "id": 777,
-        "name": "Ivan",
-        "lines": [
-            1, 2, 3, 4
-        ]
-    } 
-}';
+
+$link = pg_connect("host=localhost port=5432 dbname=food_service_db user=hits password=hits");
+
+if (!$link) {
+    echo "Ошибка: невозможно установить подключение с БД" . PHP_EOL;
+    echo "Код ошибки: " . pg_last_error($link) . PHP_EOL;
+    echo "Текст ошибки: " . pg_last_error($link) . PHP_EOL;
+}
+
+
+$res = pg_query($link, "SELECT * FROM test_table order by id");
 
 $message = array(
-    'message' => "hello",
-    'sender' => [
-        'name' => "Ivan",
-        'lastname' => "Gulevskii",
-        'id' => 76678
-    ]
+    'users' => array()
 );
-
-$message['sender']['orders'] = [1, 2, 3];
-
-$orderNames = ["sushi", "pizza", "bread", "shamov egor"];
-
-foreach ($orderNames as $key => $value) {
-    $message['sender']['orders'][$key] = [];
-    $message['sender']['orders'][$key]['id'] = $key;
-    $message['sender']['orders'][$key]['name'] = $value;
+if (!$res) {
+    echo "Не удалось выполнить запрос: (" . pg_last_error($link) . ") ";
+} else {
+    while ($row = pg_fetch_assoc($res)) {
+        $message['users'][] = [
+            'id' => $row["id"],
+            'login' => $row["login"],
+            'name' => $row["name"]
+        ];
+    }
 }
 
 echo json_encode($message);
