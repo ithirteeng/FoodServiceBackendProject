@@ -1,12 +1,25 @@
 <?php
 
-function getData($method)
+function getRequestData($method)
 {
-    if ($method == "GET") {
-        return $_GET;
-    } else {
-        return json_decode(file_get_contents("php://input"), true);
+    $data = new stdClass();
+
+    if ($method != "GET") {
+        $data->body = json_decode(file_get_contents("php://input"), true);
     }
+
+    $data->parameters = [];
+    $getData = $_GET;
+    foreach ($getData as $key => $value) {
+        if ($key != 'q') {
+            $data->parameters[$key] = $value;
+        }
+    }
+    return $data;
+}
+
+function getRequestMethod() {
+    return $_SERVER['REQUEST_METHOD'];
 }
 
 header('Content-type: application/json');
@@ -37,8 +50,29 @@ if (!$res) {
     }
 }
 
-//echo json_encode(getData("GET"));
-echo file_get_contents("php://input");
+//echo json_encode(getRequestData(getRequestMethod()));
+
+$url = isset($_GET['q']) ? $_GET['q'] : "";
+$url = rtrim($url, '/');
+//$url = rtrim($url, ' ');
+
+$urlList = explode('/', $url);
+
+//echo json_encode($urlList);
+
+$router = $urlList[0];
+$requestData = getRequestData(getRequestMethod());
+$filename = './router/'. $router . '.php';
+if (file_exists($filename)) {
+    include_once $filename;
+    route(getRequestMethod(), $urlList, $requestData);
+} else {
+    echo "SORRY, guys: 404";
+}
+
+
+
+
 
 
 
