@@ -1,4 +1,14 @@
 <?php
+
+function getData($method)
+{
+    if ($method == "GET") {
+        return $_GET;
+    } else {
+        return json_decode(file_get_contents("php://input"), true);
+    }
+}
+
 header('Content-type: application/json');
 
 $link = pg_connect("host=localhost port=5432 dbname=food_service_db user=hits password=hits");
@@ -9,12 +19,12 @@ if (!$link) {
     echo "Текст ошибки: " . pg_last_error($link) . PHP_EOL;
 }
 
-
 $res = pg_query($link, "SELECT * FROM test_table order by id");
 
 $message = array(
     'users' => array()
 );
+
 if (!$res) {
     echo "Не удалось выполнить запрос: (" . pg_last_error($link) . ") ";
 } else {
@@ -27,6 +37,10 @@ if (!$res) {
     }
 }
 
-echo json_encode($message);
+//echo json_encode(getData("GET"));
+echo file_get_contents("php://input");
+
+
+
 
 
