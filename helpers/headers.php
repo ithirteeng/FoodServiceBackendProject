@@ -1,6 +1,6 @@
 <?php
 
-function setHttpStatus($status = "200", $responseMessage = null)
+function setHttpStatus($status = "200", $responseMessage = null): void
 {
     switch ($status) {
         default:
@@ -32,9 +32,7 @@ function setHttpStatus($status = "200", $responseMessage = null)
     header($status);
     if (!is_null($responseMessage) && !is_array($responseMessage)) {
         echo json_encode(
-            [
-                'message' => $responseMessage
-            ]
+            ['message' => $responseMessage]
         );
     } else if (!empty($responseMessage)) {
         echo json_encode($responseMessage);

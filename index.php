@@ -5,7 +5,7 @@ require_once "./helpers/headers.php";
 
 header('Content-type: application/json');
 
-$url = isset($_GET['q']) ? $_GET['q'] : "";
+$url = $_GET['q'] ?? "";
 $url = rtrim($url, '/');
 $urlList = explode('/', $url);
 
@@ -14,6 +14,7 @@ $requestMethod = getRequestMethod();
 $requestData = getRequestData($requestMethod);
 
 $filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . ".php";
+
 
 // echo $filename . PHP_EOL;
 

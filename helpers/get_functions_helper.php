@@ -1,6 +1,6 @@
 <?php
 
-function getRequestData($method)
+function getRequestData($method): stdClass
 {
     $data = new stdClass();
 
