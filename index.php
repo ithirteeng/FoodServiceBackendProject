@@ -18,7 +18,8 @@ function getRequestData($method)
     return $data;
 }
 
-function getRequestMethod() {
+function getRequestMethod()
+{
     return $_SERVER['REQUEST_METHOD'];
 }
 
@@ -49,20 +50,21 @@ if (!$res) {
         ];
     }
 }
-
-//echo json_encode(getRequestData(getRequestMethod()));
-
+// если есть чт-то -> то ставим, иначе пустота
 $url = isset($_GET['q']) ? $_GET['q'] : "";
+// удаляем мусор справа (в нащем случае - /)
 $url = rtrim($url, '/');
-//$url = rtrim($url, ' ');
-
+// получаем массив, через /
 $urlList = explode('/', $url);
 
-//echo json_encode($urlList);
 
-$router = $urlList[0];
+$router = $urlList[1];
 $requestData = getRequestData(getRequestMethod());
-$filename = './router/'. $router . '.php';
+
+$filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . ".php";
+
+echo $filename . PHP_EOL;
+
 if (file_exists($filename)) {
     include_once $filename;
     route(getRequestMethod(), $urlList, $requestData);
