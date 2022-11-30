@@ -16,3 +16,23 @@ function route($method, $urlList, $requestData) {
             break;
     }
 }
+
+//global $link;
+//
+//$res = pg_query($link, "SELECT * FROM test_table order by id");
+//
+//$message = array(
+//    'users' => array()
+//);
+//
+//if (!$res) {
+//    echo "Не удалось выполнить запрос: (" . pg_last_error($link) . ") ";
+//} else {
+//    while ($row = pg_fetch_assoc($res)) {
+//        $message['users'][] = [
+//            'id' => $row["id"],
+//            'login' => $row["login"],
+//            'name' => $row["name"]
+//        ];
+//    }
+//}
