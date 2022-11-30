@@ -16,10 +16,10 @@ $requestData = getRequestData($requestMethod);
 
 $filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . "/" . $router . ".php";
 
-echo $filename . PHP_EOL;
+//echo $filename . PHP_EOL;
 
 if (file_exists($filename)) {
-    include_once "./api/" . $router . "/" . $router . ".php";
+    require_once $filename;
     route($requestMethod, $urlList, $requestData);
 } else {
     setHttpStatus("404", "The page you are looking for can't be found");
