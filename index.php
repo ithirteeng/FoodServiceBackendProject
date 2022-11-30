@@ -1,10 +1,10 @@
 <?php
+
 require_once "./helpers/database_helper.php";
 require_once "./helpers/get_functions_helper.php";
 require_once "./helpers/headers.php";
 
 header('Content-type: application/json');
-
 
 $url = $_GET['q'] ?? "";
 $url = rtrim($url, '/');
@@ -14,7 +14,7 @@ $router = $urlList[1];
 $requestMethod = getRequestMethod();
 $requestData = getRequestData($requestMethod);
 
-$filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . ".php";
+$filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . "/" . $router . ".php";
 
 echo $filename . PHP_EOL;
 
