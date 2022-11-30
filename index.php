@@ -5,6 +5,7 @@ require_once "./helpers/headers.php";
 
 header('Content-type: application/json');
 
+
 $url = $_GET['q'] ?? "";
 $url = rtrim($url, '/');
 $urlList = explode('/', $url);
@@ -15,8 +16,7 @@ $requestData = getRequestData($requestMethod);
 
 $filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . ".php";
 
-
-// echo $filename . PHP_EOL;
+echo $filename . PHP_EOL;
 
 if (file_exists($filename)) {
     include_once "./api/" . $router . "/" . $router . ".php";
@@ -24,6 +24,7 @@ if (file_exists($filename)) {
 } else {
     setHttpStatus("404", "The page you are looking for can't be found");
 }
+
 
 
 
