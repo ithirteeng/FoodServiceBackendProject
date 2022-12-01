@@ -1,4 +1,7 @@
 <?php
+/**
+ * @throws Exception
+ */
 function route($method, $urlList, $requestData): void
 {
     $filename = realpath(dirname(__FILE__)) . "/actions/" . $urlList[2] . ".php";
@@ -7,19 +10,13 @@ function route($method, $urlList, $requestData): void
         checkRequestMethods($method);
         switch ($method) {
             case "POST":
-                if ($urlList[2] == "login") {
-                    postLoginData($requestData);
-                } else if ($urlList[2] == "logout") {
-                    postLogoutData($requestData);
-                } else {
-                    postRegisterData($requestData);
-                }
+                postData($requestData);
                 break;
             case "GET":
-                getProfileData($requestData);
+                getData($requestData);
                 break;
             case "PUT":
-                putProfileData($requestData);
+                putData($requestData);
                 break;
             default:
                 break;

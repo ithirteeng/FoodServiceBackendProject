@@ -20,7 +20,12 @@ $filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . "/
 
 if (file_exists($filename)) {
     require_once $filename;
-    route($requestMethod, $urlList, $requestData);
+    try {
+        route($requestMethod, $urlList, $requestData);
+    } catch (Exception $e) {
+        setHttpStatus("505");
+        exit;
+    }
 } else {
     setHttpStatus("404", "The page you are looking for can't be found");
 }

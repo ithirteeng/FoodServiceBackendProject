@@ -7,7 +7,14 @@ function checkRequestMethods($method): void
     }
 }
 
-function postRegisterData($requestData): void
+
+function postData($requestData): void
 {
-    echo "postRegister";
+    $fullName = $requestData->body->fullName;
+    $password = hash("sha1", $requestData->body->password);
+    $address = $requestData->body->address;
+    $email = $requestData->body->email;
+    $birthdate = ;
+    $gender = $requestData->body->gender;
+    //echo "postRegister";
 }

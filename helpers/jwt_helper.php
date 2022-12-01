@@ -1,17 +1,14 @@
 <?php
 
-/**
- * @throws Exception
- */
 function createToken($email): string
 {
     $header = ['alg' => 'HS256', 'typ' => 'JWT'];
     $payload = ['email' => $email];
-    $secretKey = bin2hex(random_bytes(32));
+    $secretKey = "pchel";
 
     $currentTime = new DateTime();
     $payload['nbf'] = $currentTime->getTimestamp();
-    $payload['exp'] = $currentTime->getTimestamp() + 60;
+    $payload['exp'] = $currentTime->getTimestamp() + 30;
     $payload['iat'] = $currentTime->getTimestamp();
     $payload['iss'] = "http://localhost/";
     $payload['aud'] = "http://localhost/";
@@ -20,24 +17,62 @@ function createToken($email): string
     $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode($header)));
     $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode($payload)));
 
-    $signature = hash_hmac('sha256', $base64UrlHeader . '.' . $base64UrlPayload, base64_encode($secretKey), true);
+    $signature = hash_hmac('sha256', $base64UrlHeader . '.' . $base64UrlPayload, $secretKey, true);
 
     $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
     return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
 }
 
-function checkIsTokenValid($token): bool {
-    $tokenParts = explode(".", $token);
-    return $tokenParts[0] == "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-}
 
-function getTokenPayload($token) {
+function getTokenPayload($token): string
+{
     $tokenParts = explode(".", $token);
+    //echo $tokenParts[1] . PHP_EOL;
     return $tokenParts[1];
 }
 
-function checkIfTokenIsExpired($token): bool {
+function getTokenHeader($token): string
+{
+    $tokenParts = explode(".", $token);
+    //echo $tokenParts[0] . PHP_EOL;
+    return $tokenParts[0];
+}
+
+function getTokenSignature($token): string
+{
+    $tokenParts = explode(".", $token);
+    //echo $tokenParts[2] . PHP_EOL;
+    return $tokenParts[2];
+}
+
+function checkIfTokenIsExpired($token): bool
+{
     $payload = getTokenPayload($token);
     return $payload['exp'] < (new DateTime())->getTimestamp();
+}
+
+function checkTokenExistence($token): bool
+{
+    $payload = getTokenPayload($token);
+    $header = getTokenHeader($token);
+
+    $signature = hash_hmac('sha256', $header . '.' . $payload, "pchel", true);
+
+    $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+
+    //echo "sign  " . $base64UrlSignature . PHP_EOL;
+
+    return $base64UrlSignature == getTokenSignature($token);
+}
+
+function checkIfTokenInBlackList($token): bool {
+    global $link;
+    if (pg_fetch_assoc(
+        pg_query($link, "select value from token_blacklist where value = '$token'")
+    )) {
+        return false;
+    } else {
+        return true;
+    }
 }

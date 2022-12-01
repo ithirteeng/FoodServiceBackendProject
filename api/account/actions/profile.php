@@ -7,12 +7,12 @@ function checkRequestMethods($method): void
     }
 }
 
-function getProfileData($requestData): void
+function getData($requestData): void
 {
     echo "getProfile";
 }
 
-function putProfileData($requestData): void
+function putData($requestData): void
 {
     echo "putProfile";
 }

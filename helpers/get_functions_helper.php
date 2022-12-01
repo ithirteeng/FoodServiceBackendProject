@@ -5,7 +5,7 @@ function getRequestData($method): stdClass
     $data = new stdClass();
 
     if ($method != "GET") {
-        $data->body = json_decode(file_get_contents("php://input"), true);
+        $data->body = (object) json_decode(file_get_contents("php://input"), true);
     }
 
     $data->parameters = [];
