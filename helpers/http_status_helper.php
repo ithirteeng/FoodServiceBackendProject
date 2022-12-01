@@ -25,6 +25,9 @@ function setHttpStatus($status = "200", $responseMessage = null): void
         case "409":
             $status = "HTTP/1.0 409 Conflict";
             break;
+        case "415":
+            $status = "HTTP/1.0 415 Unsupported Media Type";
+            break;
         case "500":
             $status = "HTTP/1.0 500 Internal Server Error";
             break;
@@ -32,7 +35,10 @@ function setHttpStatus($status = "200", $responseMessage = null): void
     header($status);
     if (!is_null($responseMessage) && !is_array($responseMessage)) {
         echo json_encode(
-            ['message' => $responseMessage]
+            [
+                'status' => $status,
+                'message' => $responseMessage
+            ]
         );
     } else if (!empty($responseMessage)) {
         echo json_encode($responseMessage);

@@ -1,5 +1,7 @@
 <?php
 
+require_once "helpers/validation_helper.php";
+
 function checkRequestMethods($method): void
 {
     if ($method != "POST") {
@@ -11,10 +13,12 @@ function checkRequestMethods($method): void
 function postData($requestData): void
 {
     $fullName = $requestData->body->fullName;
-    $password = hash("sha1", $requestData->body->password);
+    $password = $requestData->body->password;
     $address = $requestData->body->address;
     $email = $requestData->body->email;
-    $birthdate = ;
+    $birthdate = $requestData->body->birthDate;
     $gender = $requestData->body->gender;
-    //echo "postRegister";
+    $phoneNumber = $requestData->body->phoneNumber;
+
+
 }
