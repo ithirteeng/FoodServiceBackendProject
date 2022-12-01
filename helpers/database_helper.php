@@ -1,6 +1,6 @@
 <?php
 
-require_once "headers.php";
+require_once "http_status_helper.php";
 
 $link = pg_connect("host=localhost port=5432 dbname=food_service_db user=hits password=hits");
 

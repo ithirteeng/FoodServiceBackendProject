@@ -2,7 +2,7 @@
 
 require_once "./helpers/database_helper.php";
 require_once "./helpers/get_functions_helper.php";
-require_once "./helpers/headers.php";
+require_once "./helpers/http_status_helper.php";
 
 header('Content-type: application/json');
 

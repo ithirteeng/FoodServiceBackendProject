@@ -1,5 +1,7 @@
 <?php
 
+require_once "helpers/jwt_helper.php";
+
 function checkRequestMethods($method): void
 {
     if ($method != "POST") {
@@ -7,7 +9,12 @@ function checkRequestMethods($method): void
     }
 }
 
+/**
+ * @throws Exception
+ */
 function postLoginData($requestData): void
 {
-    echo "postLogin";
+    $token = createToken("shjkf@email");
+    echo $token . PHP_EOL;
+
 }
