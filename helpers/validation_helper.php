@@ -5,32 +5,28 @@ function getRegistrationValidationResult($requestData): bool
 {
     $fullName = $requestData->body->fullName;
     $password = $requestData->body->password;
-    $address = $requestData->body->address;
     $email = $requestData->body->email;
     $birthdate = $requestData->body->birthDate;
     $gender = $requestData->body->gender;
     $phoneNumber = $requestData->body->phoneNumber;
 
     if (!checkFullnameValidity($fullName)) {
-        setHttpStatus("415", "Fullname must contain only letters and consist of at least 2 words");
+        setHttpStatus("415", "Fullname must contain only letters and consist minimum of at least 2 words");
         return false;
-    } else if (checkPasswordValidity($password)) {
-        setHttpStatus("415", "Password must contain at least 6 characters and: \none uppercase letter,
-         \none lowercase letter, 
-         \none digit, 
-         \n one special symbol");
+    } else if (!checkPasswordValidity($password)) {
+        setHttpStatus("415", "Password must contain at least 6 characters and at least: one uppercase letter, one lowercase letter, one digit, one special symbol");
         return false;
     } else if (!checkEmailValidity($email)) {
         setHttpStatus("415", "Email must be in format example@example.com");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("415", "Date must be in format YYYY-MM-DD");
+        setHttpStatus("415", "Date must be empty/null or in format YYYY-MM-DD");
         return false;
     } else if (!checkGenderValidity($gender)) {
         setHttpStatus("415", "Gender must be Male or Female");
         return false;
-    } else if (checkPhoneNumberValidity($phoneNumber)) {
-        setHttpStatus("415", "Phone must be empty or in correct form");
+    } else if (!checkPhoneNumberValidity($phoneNumber)) {
+        setHttpStatus("415", "Phone must be empty/null or in correct form");
         return false;
     } else {
         return true;
@@ -39,9 +35,12 @@ function getRegistrationValidationResult($requestData): bool
 
 function checkFullnameValidity($fullname): bool
 {
-    $regex = "/^[a-z]([-']?[a-z]+)*( [a-z]([-']?[a-z]+)*)+$/i";
-    $regex2 = "/^[а-я]([-']?[а-я]+)*( [а-я]([-']?[а-я]+)*)+$/i";
-    return (preg_match($regex) or preg_match($regex2)) and strlen($fullname) > 1;
+    $regex = "/^[a-zA-ZА-я]+([-']?[a-zA-ZА-я]]+)*(\s[a-zA-ZА-я]([-']?[a-zA-ZА-я]+)*)+$/ui";
+    if (preg_match($regex, $fullname)) {
+        return true;
+    }  else {
+        return false;
+    }
 }
 
 function checkDateValidity($date, $format = 'Y-m-d'): bool
@@ -58,12 +57,12 @@ function checkDateValidity($date, $format = 'Y-m-d'): bool
 
 function checkPhoneNumberValidity($phoneNumber): bool
 {
-    $regex = '/^((\+7|7|8)+([0-9]){10})$/m';
     if ($phoneNumber == null) {
         return true;
     } else if (strlen($phoneNumber) == "") {
         return true;
     } else {
+        $regex = '/^((\+7|7|8)+([0-9]){10})$/m';
         return preg_match($regex, $phoneNumber);
     }
 }

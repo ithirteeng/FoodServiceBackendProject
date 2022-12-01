@@ -20,5 +20,10 @@ function postData($requestData): void
     $gender = $requestData->body->gender;
     $phoneNumber = $requestData->body->phoneNumber;
 
+    if (getRegistrationValidationResult($requestData)) {
+        echo "valid";
+    } else {
+        echo "\ninvalid";
+    }
 
 }
