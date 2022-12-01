@@ -1,6 +1,8 @@
 <?php
 
 require_once "helpers/validation_helper.php";
+require_once "helpers/http_status_helper.php";
+require_once "helpers/jwt_helper.php";
 
 function checkRequestMethods($method): void
 {
@@ -29,10 +31,12 @@ function postData($requestData): void
         if (getRegistrationValidationResult($requestData)) {
             pg_query($link, "insert into users (fullname, email, address, birthdate, phonenumber, password, gender)
                                     values ('$fullName', '$email', '$address', '$birthdate', '$phoneNumber', '$hashPassword', '$gender')");
+
             $newToken = createToken($email);
             if (checkIfTokenInBlackList($newToken)) {
                 pg_query($link, "delete from token_blacklist where value = '$newToken'");
             }
+
             echo json_encode(["token" => $newToken]);
         }
     }
