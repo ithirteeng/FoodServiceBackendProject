@@ -11,9 +11,8 @@ function checkRequestMethods($method): void
     }
 }
 
-function postData($requestData): void
+function postData(): void
 {
-    global $link;
     $authorization = getallheaders()["Authorization"];
     $token = explode(" ", $authorization)[1];
 
@@ -21,7 +20,7 @@ function postData($requestData): void
         setHttpStatus("401", "The token has expired");
         addTokenToBlackList($token);
     } else if (checkIfTokenInBlackList($token)) {
-        setHttpStatus("403", "Token in blacklist");
+        setHttpStatus("401", "User is unauthorized"); //error code?
     } else {
         if (checkTokenExistence($token)) {
             addTokenToBlackList($token);

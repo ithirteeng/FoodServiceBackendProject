@@ -10,7 +10,7 @@ function createToken($email): string
 
     $currentTime = new DateTime();
     $payload['nbf'] = $currentTime->getTimestamp();
-    $payload['exp'] = $currentTime->getTimestamp() + 60;
+    $payload['exp'] = $currentTime->getTimestamp() + 300;
     $payload['iat'] = $currentTime->getTimestamp();
     $payload['iss'] = "http://localhost/";
     $payload['aud'] = "http://localhost/";
@@ -68,15 +68,11 @@ function checkTokenExistence($token): bool
     return $base64UrlSignature == getTokenSignature($token);
 }
 
-function addTokenToBlackList($token): void {
+function addTokenToBlackList($token): void
+{
     global $link;
     if (!checkIfTokenInBlackList($token)) {
-        try {
-            pg_query($link, "insert into token_blacklist (value) values ('$token')");
-        } catch (\mysql_xdevapi\Exception) {
-
-        }
-
+        pg_query($link, "insert into token_blacklist (value) values ('$token')");
     }
 
 }
@@ -91,4 +87,10 @@ function checkIfTokenInBlackList($token): bool
     } else {
         return false;
     }
+}
+
+function getEmailFromToken($token): string
+{
+    $payload = getTokenPayload($token);
+    return $payload['email'];
 }

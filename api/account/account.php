@@ -1,7 +1,4 @@
 <?php
-/**
- * @throws Exception
- */
 function route($method, $urlList, $requestData): void
 {
     $filename = realpath(dirname(__FILE__)) . "/actions/" . $urlList[2] . ".php";
@@ -13,7 +10,7 @@ function route($method, $urlList, $requestData): void
                 postData($requestData);
                 break;
             case "GET":
-                getData($requestData);
+                getData();
                 break;
             case "PUT":
                 putData($requestData);
