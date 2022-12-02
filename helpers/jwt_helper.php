@@ -1,5 +1,7 @@
 <?php
 
+require_once "database_helper.php";
+
 function createToken($email): string
 {
     $header = ['alg' => 'HS256', 'typ' => 'JWT'];
@@ -8,7 +10,7 @@ function createToken($email): string
 
     $currentTime = new DateTime();
     $payload['nbf'] = $currentTime->getTimestamp();
-    $payload['exp'] = $currentTime->getTimestamp() + 30;
+    $payload['exp'] = $currentTime->getTimestamp() + 60;
     $payload['iat'] = $currentTime->getTimestamp();
     $payload['iss'] = "http://localhost/";
     $payload['aud'] = "http://localhost/";
@@ -25,11 +27,11 @@ function createToken($email): string
 }
 
 
-function getTokenPayload($token): string
+function getTokenPayload($token): array
 {
     $tokenParts = explode(".", $token);
     //echo $tokenParts[1] . PHP_EOL;
-    return $tokenParts[1];
+    return json_decode(base64_decode($tokenParts[1]), true);
 }
 
 function getTokenHeader($token): string
@@ -54,25 +56,39 @@ function checkIfTokenIsExpired($token): bool
 
 function checkTokenExistence($token): bool
 {
-    $payload = getTokenPayload($token);
+
+    $payload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode(getTokenPayload($token))));
     $header = getTokenHeader($token);
 
     $signature = hash_hmac('sha256', $header . '.' . $payload, "pchel", true);
 
     $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-
     //echo "sign  " . $base64UrlSignature . PHP_EOL;
 
     return $base64UrlSignature == getTokenSignature($token);
 }
 
-function checkIfTokenInBlackList($token): bool {
+function addTokenToBlackList($token): void {
+    global $link;
+    if (!checkIfTokenInBlackList($token)) {
+        try {
+            pg_query($link, "insert into token_blacklist (value) values ('$token')");
+        } catch (\mysql_xdevapi\Exception) {
+
+        }
+
+    }
+
+}
+
+function checkIfTokenInBlackList($token): bool
+{
     global $link;
     if (pg_fetch_assoc(
         pg_query($link, "select value from token_blacklist where value = '$token'")
     )) {
-        return false;
-    } else {
         return true;
+    } else {
+        return false;
     }
 }

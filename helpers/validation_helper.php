@@ -11,22 +11,22 @@ function getRegistrationValidationResult($requestData): bool
     $phoneNumber = $requestData->body->phoneNumber;
 
     if (!checkFullnameValidity($fullName)) {
-        setHttpStatus("415", "Fullname must contain only letters and consist minimum of at least 2 words");
+        setHttpStatus("400", "Fullname must contain only letters and consist minimum of at least 2 words");
         return false;
     } else if (!checkPasswordValidity($password)) {
-        setHttpStatus("415", "Password must contain at least 6 characters and at least: one uppercase letter, one lowercase letter, one digit, one special symbol");
+        setHttpStatus("400", "Password must contain at least 6 characters and at least: one uppercase letter, one lowercase letter, one digit, one special symbol");
         return false;
     } else if (!checkEmailValidity($email)) {
-        setHttpStatus("415", "Email must be in format example@example.com");
+        setHttpStatus("400", "Email must be in format example@example.com");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("415", "Date must be empty/null or in format YYYY-MM-DD");
+        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DD");
         return false;
     } else if (!checkGenderValidity($gender)) {
-        setHttpStatus("415", "Gender must be Male or Female");
+        setHttpStatus("400", "Gender must be Male or Female");
         return false;
     } else if (!checkPhoneNumberValidity($phoneNumber)) {
-        setHttpStatus("415", "Phone must be empty/null or in correct form");
+        setHttpStatus("400", "Phone must be empty/null or in correct form");
         return false;
     } else {
         return true;
