@@ -43,15 +43,6 @@ function getData(): void
     }
 }
 
-/*
- {
-  "fullName": "string",
-  "birthDate": "2022-12-02T11:05:28.893Z",
-  "gender": "Male",
-  "address": "string",
-  "phoneNumber": "string"
-}
- */
 function putData($requestData): void
 {
     global $link;
