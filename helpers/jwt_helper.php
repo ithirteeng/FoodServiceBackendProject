@@ -71,10 +71,19 @@ function checkTokenExistence($token): bool
 function addTokenToBlackList($token): void
 {
     global $link;
+    if (countTokensInBlackList() > 50) {
+        pg_query($link, "delete from token_blacklist");
+    }
     if (!checkIfTokenInBlackList($token)) {
         pg_query($link, "insert into token_blacklist (value) values ('$token')");
     }
+}
 
+function countTokensInBlackList(): int
+{
+    global $link;
+    $result = pg_fetch_assoc(pg_query($link, "select count(*) from token_blacklist"));
+    return $result['count'];
 }
 
 function checkIfTokenInBlackList($token): bool

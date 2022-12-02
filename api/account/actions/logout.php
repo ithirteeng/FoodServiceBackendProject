@@ -15,7 +15,6 @@ function postData(): void
 {
     $authorization = getallheaders()["Authorization"];
     $token = explode(" ", $authorization)[1];
-
     if (checkIfTokenIsExpired($token)) {
         setHttpStatus("401", "The token has expired");
         addTokenToBlackList($token);
