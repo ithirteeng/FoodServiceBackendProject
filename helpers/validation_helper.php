@@ -33,12 +33,36 @@ function getRegistrationValidationResult($requestData): bool
     }
 }
 
+function getProfileDataValidationResult($requestData): bool
+{
+    $fullName = $requestData->body->fullName;
+    $birthdate = $requestData->body->birthDate;
+    $gender = $requestData->body->gender;
+    $phoneNumber = $requestData->body->phoneNumber;
+
+    if (!checkFullnameValidity($fullName)) {
+        setHttpStatus("400", "Fullname must contain only letters and consist minimum of at least 2 words");
+        return false;
+    } else if (!checkGenderValidity($gender)) {
+        setHttpStatus("400", "Gender must be Male or Female");
+        return false;
+    } else if (!checkDateValidity($birthdate)) {
+        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DD");
+        return false;
+    } else if (!checkPhoneNumberValidity($phoneNumber)) {
+        setHttpStatus("400", "Phone must be empty/null or in correct form");
+        return false;
+    } else {
+        return true;
+    }
+}
+
 function checkFullnameValidity($fullname): bool
 {
     $regex = "/^[a-zA-ZА-я]+([-']?[a-zA-ZА-я]]+)*(\s[a-zA-ZА-я]([-']?[a-zA-ZА-я]+)*)+$/ui";
     if (preg_match($regex, $fullname)) {
         return true;
-    }  else {
+    } else {
         return false;
     }
 }

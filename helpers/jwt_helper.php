@@ -10,7 +10,7 @@ function createToken($email): string
 
     $currentTime = new DateTime();
     $payload['nbf'] = $currentTime->getTimestamp();
-    $payload['exp'] = $currentTime->getTimestamp() + 300;
+    $payload['exp'] = $currentTime->getTimestamp() + 3600;
     $payload['iat'] = $currentTime->getTimestamp();
     $payload['iss'] = "http://localhost/";
     $payload['aud'] = "http://localhost/";
