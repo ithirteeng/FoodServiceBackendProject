@@ -20,7 +20,7 @@ function getRegistrationValidationResult($requestData): bool
         setHttpStatus("400", "Email must be in format example@example.com");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DD");
+        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTH:M:S");
         return false;
     } else if (!checkGenderValidity($gender)) {
         setHttpStatus("400", "Gender must be Male or Female");
@@ -47,7 +47,7 @@ function getProfileDataValidationResult($requestData): bool
         setHttpStatus("400", "Gender must be Male or Female");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DD");
+        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTH:M:S or in YYYY-MM-DD");
         return false;
     } else if (!checkPhoneNumberValidity($phoneNumber)) {
         setHttpStatus("400", "Phone must be empty/null or in correct form");
@@ -67,17 +67,21 @@ function checkFullnameValidity($fullname): bool
     }
 }
 
-function checkDateValidity($date, $format = 'Y-m-d'): bool
+function checkDateValidity($date, $format = 'Y-m-d\TH:i:s'): bool
 {
+    $secondFormat = 'Y-m-d';
     if ($date == null) {
         return true;
     } else if ($date == "") {
         return true;
     } else {
         $d = DateTime::createFromFormat($format, $date);
-        return $d && $d->format($format) == $date;
+        $d2 = DateTime::createFromFormat($secondFormat, $date);
+
+        return ($d && $d->format($format) == $date) || ($d2 && $d2->format($secondFormat) == $date);
     }
 }
+
 
 function checkPhoneNumberValidity($phoneNumber): bool
 {

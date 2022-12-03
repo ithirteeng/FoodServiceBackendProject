@@ -32,7 +32,7 @@ function getData(): void
             $responseData = [
                 'id' => $tableRow["id"],
                 'fullName' => $tableRow["fullname"],
-                'birthDate' => $tableRow["birthdate"],
+                'birthDate' => convertDateToCorrectForm($tableRow["birthdate"]),
                 'gender' => $tableRow["gender"],
                 'address' => $tableRow["address"],
                 'email' => $tableRow["email"],
@@ -41,6 +41,12 @@ function getData(): void
         }
         echo json_encode($responseData);
     }
+}
+
+function convertDateToCorrectForm($birthDate): string
+{
+    $result = str_replace(' ', 'T', $birthDate);
+    return $result . ".000Z";
 }
 
 function putData($requestData): void
