@@ -20,7 +20,7 @@ function getRegistrationValidationResult($requestData): bool
         setHttpStatus("400", "Email must be in format example@example.com");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTH:M:S");
+        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkGenderValidity($gender)) {
         setHttpStatus("400", "Gender must be Male or Female");
@@ -47,7 +47,7 @@ function getProfileDataValidationResult($requestData): bool
         setHttpStatus("400", "Gender must be Male or Female");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTH:M:S or in YYYY-MM-DD");
+        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkPhoneNumberValidity($phoneNumber)) {
         setHttpStatus("400", "Phone must be empty/null or in correct form");
@@ -78,9 +78,23 @@ function checkDateValidity($date, $format = 'Y-m-d\TH:i:s'): bool
         $d = DateTime::createFromFormat($format, $date);
         $d2 = DateTime::createFromFormat($secondFormat, $date);
 
-        return ($d && $d->format($format) == $date) || ($d2 && $d2->format($secondFormat) == $date);
+
+        if ($d && $d->format($format) == $date) {
+            return checkDateRangeValidity($d);
+        } else if ($d2 && $d2->format($secondFormat) == $date) {
+            return checkDateRangeValidity($d2);
+        } else {
+            return false;
+        }
     }
 }
+
+function checkDateRangeValidity($date): bool {
+    $nowadays = new DateTime();
+    $oldDate = new DateTime("01/01/1900");
+    return $date >= $oldDate && $date < $nowadays;
+}
+
 
 
 function checkPhoneNumberValidity($phoneNumber): bool
