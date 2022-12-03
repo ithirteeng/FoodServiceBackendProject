@@ -1,28 +1,54 @@
 <?php
 
+require_once "helpers/http_status_helper.php";
+require_once "helpers/database_helper.php";
+require_once "helpers/jwt_helper.php";
+
 function route($method, $urlList, $requestData): void
 {
+    if (count($urlList) == 2) {
+        if (checkRequestMethods($method)) {
+            getData($requestData);
+        }
+    } else if (count($urlList) == 3) {
+        require_once "actions/certain_dish.php";
+        if (checkRequestMethods($method)) {
+            getData($requestData, $urlList[2]);
+        }
+    } else if (count($urlList) == 4) {
+        if ($urlList[3] == "rating") {
+            require_once "actions/rating.php";
+            if (checkRequestMethods($method)) {
+                getData($requestData, $urlList[2]);
+            }
+        } else {
+            setHttpStatus("404", "The page you are looking for can't be found");
+        }
+    } else if (count($urlList) == 5) {
+        if ($urlList[3] == "rating" && $urlList[4] == "check") {
+            require_once "actions/check.php";
+            if (checkRequestMethods($method)) {
+                getData($requestData, $urlList[2]);
+            }
+        } else {
+            setHttpStatus("404", "The page you are looking for can't be found");
+        }
+    } else {
+        setHttpStatus("404", "The page you are looking for can't be found");
+    }
+}
 
-    echo json_encode($requestData->parameters);
+function getData($requestData): void
+{
 
-//    $filename = realpath(dirname(__FILE__)) . "/actions/" . $urlList[2] . ".php";
-//    if (count($urlList) == 3 and file_exists($filename)) {
-//        require_once $filename;
-//        checkRequestMethods($method);
-//        switch ($method) {
-//            case "POST":
-//                postData($requestData);
-//                break;
-//            case "GET":
-//                getData();
-//                break;
-//            case "PUT":
-//                putData($requestData);
-//                break;
-//            default:
-//                break;
-//        }
-//    } else {
-//        setHttpStatus("404", "The page you are looking for can't be found");
-//    }
+}
+
+function checkRequestMethods($method): bool
+{
+    if ($method != "GET") {
+        setHttpStatus("405", "Method " . $method . " is not allowed");
+        return true;
+    } else {
+        return false;
+    }
 }
