@@ -8,7 +8,7 @@ function route($method, $urlList, $requestData): void
 {
     if (count($urlList) == 2) {
         if (checkRequestMethods($method)) {
-            getData($requestData);
+            getDishesData($requestData);
         }
     } else if (count($urlList) == 3) {
         require_once "actions/certain_dish.php";
@@ -38,7 +38,7 @@ function route($method, $urlList, $requestData): void
     }
 }
 
-function getData($requestData): void
+function getDishesData($requestData): void
 {
 
 }
