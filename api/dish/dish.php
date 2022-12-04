@@ -8,8 +8,9 @@ require_once "helpers/dish_helper.php";
 function route($method, $urlList, $requestData): void
 {
     if (count($urlList) == 2) {
+        require_once "actions/all_dishes.php";
         if ($method == "GET") {
-           getDishesData($requestData);
+           getData($requestData);
         } else {
             setHttpStatus("405", "Method " . $method . " is not allowed");
         }
@@ -68,24 +69,3 @@ function checkDishIdExisting($id): bool
 
 }
 
-function getDishesData($requestData): void
-{
-    $result = new stdClass();
-    $pagination = getPaginationInfo($requestData);
-    if (checkPaginationCorrectness($pagination)) {
-        $result->dishes = getDishesInfo($requestData);
-        $result->pagination = $pagination;
-        echo json_encode($result);
-    }
-}
-
-function checkPaginationCorrectness($pagination): bool {
-    $currentPage = $pagination->current;
-    $amountOfPages = $pagination->count;
-    if ($currentPage == 0 || $currentPage > $amountOfPages) {
-        setHttpStatus("400", "page is incorrect");
-        return false;
-    } else {
-        return true;
-    }
-}

@@ -112,3 +112,33 @@ function getCorrectSortingString($sortingType): string
     }
 }
 
+function getCorrectDishParametersError($requestData): bool
+{
+    global $link;
+    $parameters = $requestData->parameters;
+    $categories = $parameters['category'] ?? null;
+    $isVegetarian = $parameters['vegetarian'] ?? null;
+    $sortingType = $parameters['sorting'] ?? null;
+
+    if ($sortingType != null and getCorrectSortingString($sortingType) == "") {
+        setHttpStatus("404", "sortingType can be NameAsc, NameDesc, PriceAsc, PriceDesc, RatingAsc, RatingDesc");
+        return false;
+    } else if ($isVegetarian != null and ($isVegetarian != "true" and $isVegetarian != "false")) {
+        setHttpStatus("404", "vegetarian must be true or false");
+        return false;
+    } else if ($categories != null) {
+        foreach ($categories as $category) {
+            if (!pg_fetch_assoc(
+                pg_query($link, "select type from dish_category where type = '$category'")
+            )) {
+                setHttpStatus("404", "category '$category' doesn't exist");
+                return false;
+            }
+        }
+        return true;
+    } else {
+        return true;
+    }
+
+}
+
