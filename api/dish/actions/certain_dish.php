@@ -10,7 +10,12 @@ function checkRequestMethods($method): bool
     }
 }
 
-function getData($requestData, $id): void
+function getData($id): void
 {
+    if (checkDishIdExisting($id)) {
+        echo json_encode(getDishInfo($id));
+    } else {
+        setHttpStatus("404", "Dishes with this id do not exist");
+    }
 
 }

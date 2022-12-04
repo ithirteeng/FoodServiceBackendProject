@@ -10,22 +10,18 @@ function route($method, $urlList, $requestData): void
     if (count($urlList) == 2) {
         require_once "actions/all_dishes.php";
         if ($method == "GET") {
-           getData($requestData);
+            getData($requestData);
         } else {
             setHttpStatus("405", "Method " . $method . " is not allowed");
         }
     } else if (count($urlList) == 3) {
         require_once "actions/certain_dish.php";
-        if (checkDishIdExisting($urlList[2])) {
-            getData($requestData, $urlList[2]);
-        } else {
-            setHttpStatus("404", "Dishes with this id do not exist");
-        }
+        getData($urlList[2]);
     } else if (count($urlList) == 4) {
         if ($urlList[3] == "rating") {
             require_once "actions/rating.php";
             if (checkDishIdExisting($urlList[2])) {
-                getData($requestData, $urlList[2]);
+                getData($urlList[2]);
             } else {
                 setHttpStatus("404", "Dishes with this id do not exist");
             }

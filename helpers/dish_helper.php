@@ -15,24 +15,14 @@ function getDishesInfo($requestData): array
     if ($page == null) {
         $page = 1;
     } else {
-        $page = (int) $page;
+        $page = (int)$page;
     }
 
     $result = array();
     $count = 0;
     while ($row = pg_fetch_assoc($data)) {
         if ($count >= ($page * $pageSize - $pageSize) and $count < ($pageSize * $page)) {
-            $isVegetarian = $row['vegetarian'] == 't';
-
-            $result[] = [
-                "name" => $row['name'],
-                "description" => $row['description'],
-                "price" => (float)$row['price'],
-                "vegetarian" => $isVegetarian,
-                "category" => $row['category'],
-                "rating" => $row['rating'] ? (float)$row['rating'] : null,
-                "id" => $row['id'],
-            ];
+            $result[] = setupDish($row);
         }
         $count += 1;
     }
@@ -40,6 +30,29 @@ function getDishesInfo($requestData): array
     return $result;
 }
 
+function setupDish($tableRow): array
+{
+    $isVegetarian = $tableRow['vegetarian'] == 't';
+    return [
+        "name" => $tableRow['name'],
+        "description" => $tableRow['description'],
+        "price" => (float)$tableRow['price'],
+        "image" => $tableRow['image'],
+        "vegetarian" => $isVegetarian,
+        "category" => $tableRow['category'],
+        "rating" => $tableRow['rating'] ? (float)$tableRow['rating'] : null,
+        "id" => $tableRow['id'],
+    ];
+}
+
+function getDishInfo($id): array
+{
+    global $link;
+    $data = pg_query($link, "select * from dishes where id = '$id'");
+    $row = pg_fetch_assoc($data);
+    return setupDish($row);
+
+}
 
 function getPaginationInfo($requestData): stdClass
 {
