@@ -187,3 +187,18 @@ function checkDishIdExisting($id): bool
 
 }
 
+function checkUserRatingExiting($email, $dishId): bool
+{
+    global $link;
+    $data = pg_query($link, "select id from users where email = '$email'");
+    $tableRow = pg_fetch_assoc($data);
+    $userId = $tableRow['id'];
+
+    $ratingData = pg_query($link, "select rating.rating from rating where dish_id = '$dishId' and user_id = '$userId'");
+    if (pg_fetch_assoc($ratingData)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+

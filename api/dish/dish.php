@@ -16,27 +16,23 @@ function route($method, $urlList, $requestData): void
         }
     } else if (count($urlList) == 3) {
         require_once "actions/certain_dish.php";
-        getData($urlList[2]);
+        if (checkRequestMethods($method)) {
+            getData($urlList[2]);
+        }
     } else if (count($urlList) == 4) {
         if ($urlList[3] == "rating") {
-            require_once "actions/rating.php";
-            if (checkDishIdExisting($urlList[2])) {
-                getData($urlList[2]);
-            } else {
-                setHttpStatus("404", "Dishes with this id do not exist");
+            require_once "actions/set_dish_rating.php";
+            if (checkRequestMethods($method)) {
+                postData($requestData, $urlList[2]);
             }
         } else {
             setHttpStatus("404", "The page you are looking for can't be found");
         }
     } else if (count($urlList) == 5) {
         if ($urlList[3] == "rating" && $urlList[4] == "check") {
-            require_once "actions/check.php";
+            require_once "actions/check_dish_rating.php";
             if (checkRequestMethods($method)) {
-                if (checkDishIdExisting($urlList[2])) {
-                    getData($requestData, $urlList[2]);
-                } else {
-                    setHttpStatus("404", "Dishes with this id do not exist");
-                }
+                getData($urlList[2]);
             }
         } else {
             setHttpStatus("404", "The page you are looking for can't be found");

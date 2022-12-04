@@ -1,5 +1,9 @@
 <?php
 
+require_once "helpers/jwt_helper.php";
+require_once "helpers/dish_helper.php";
+
+
 function checkRequestMethods($method): bool
 {
     if ($method != "GET") {
@@ -22,10 +26,14 @@ function getData($id): void
         setHttpStatus("401", "User is unauthorized");
     } else {
         if (checkDishIdExisting($id)) {
-            echo json_encode(getDishInfo($id));
+            $email = getEmailFromToken($token);
+            if (checkUserRatingExiting($email, $id)) {
+                echo "false";
+            } else {
+                echo "true";
+            }
         } else {
             setHttpStatus("404", "Dishes with this id do not exist");
         }
     }
-
 }
