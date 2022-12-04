@@ -57,3 +57,93 @@ values (
            false,
            'Soup'
        );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Сладкий ролл с апельсином и бананом',
+           'Апельсин, банан, шоколадная крошка, сыр творожный, сырная лепешка. БЖУ на 100 г. Белки, г - 5,86 Жиры, г - 13,12 Углеводы, г - 44,05',
+           250,
+           'https://mistertako.ru/uploads/products/05391255-54ee-11ed-8575-0050569dbef0.jpg',
+           true,
+           'Dessert'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Сладкий ролл с бананом и киви',
+           'Сырная лепешка, банан, киви, сливочный сыр, топинг клубничный',
+           220,
+           'https://mistertako.ru/uploads/products/9e7c8581-7a6f-11eb-850a-0050569dbef0.jpeg',
+           true,
+           'Dessert'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Сладкий ролл с арахисом и бананом',
+           'Сырная лепешка, банан, арахис, сливочный сыр, шоколадная крошка, топинг карамельный',
+           210,
+           'https://mistertako.ru/uploads/products/a4772f7a-7a6f-11eb-850a-0050569dbef0.jpeg',
+           true,
+           'Dessert'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Чизкейк Нью-Йорк',
+           'Чизкейк Нью-Йорк - настоящая классика. Его основа - сочетание вкусов нежнейшего сливочного сыра и тонкой песочной корочки.',
+           210,
+           'https://mistertako.ru/uploads/products/120b46b1-5f32-11e8-8f7d-00155dd9fd01.jpg',
+           true,
+           'Dessert'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Коктейль классический',
+           'Классический молочный коктейль',
+           140,
+           'https://mistertako.ru/uploads/products/120b46bc-5f32-11e8-8f7d-00155dd9fd01.jpg',
+           true,
+           'Drink'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Коктейль клубничный',
+           'Классический молочный коктейль с клубничным топпингом',
+           170,
+           'https://mistertako.ru/uploads/products/120b46bd-5f32-11e8-8f7d-00155dd9fd01.jpg',
+           true,
+           'Drink'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Коктейль шоколадный',
+           'Классический молочный коктейль с добавлением шоколадного топпинга',
+           170,
+           'https://mistertako.ru/uploads/products/120b46be-5f32-11e8-8f7d-00155dd9fd01.jpg',
+           true,
+           'Drink'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Морс cмородиновый',
+           'Смородиновый морс',
+           90,
+           'https://mistertako.ru/uploads/products/120b46be-5f32-11e8-8f7d-00155dd9fd01.jpg',
+           true,
+           'Drink'
+       );
+
+insert into dishes (name, description, price, image, vegetarian, category)
+values (
+           'Морс облепиховый',
+           'Облепиха, имбирь, сахар',
+           90,
+           'https://mistertako.ru/uploads/products/5a7d58a5-879d-11eb-850a-0050569dbef0.jpg',
+           true,
+           'Drink'
+       );
