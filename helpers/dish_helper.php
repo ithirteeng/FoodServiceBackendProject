@@ -2,27 +2,39 @@
 
 require_once "helpers/database_helper.php";
 
+$pageSize = 5;
+
 function getDishesInfo($requestData): array
 {
     global $link;
+    global $pageSize;
     $parameters = $requestData->parameters;
     $sqlQuery = sqlQueryGenerator($parameters, "*");
     $data = pg_query($link, $sqlQuery);
+    $page = $parameters['page'] ?? null;
+    if ($page == null) {
+        $page = 1;
+    } else {
+        $page = (int) $page;
+    }
 
     $result = array();
-
+    $count = 0;
     while ($row = pg_fetch_assoc($data)) {
-        $isVegetarian = $row['vegetarian'] == 't';
+        if ($count >= ($page * $pageSize - $pageSize) and $count < ($pageSize * $page)) {
+            $isVegetarian = $row['vegetarian'] == 't';
 
-        $result[] = [
-            "name" => $row['name'],
-            "description" => $row['description'],
-            "price" => (float)$row['price'],
-            "vegetarian" => $isVegetarian,
-            "category" => $row['category'],
-            "rating" => $row['rating'] ? (float)$row['rating'] : null,
-            "id" => $row['id'],
-        ];
+            $result[] = [
+                "name" => $row['name'],
+                "description" => $row['description'],
+                "price" => (float)$row['price'],
+                "vegetarian" => $isVegetarian,
+                "category" => $row['category'],
+                "rating" => $row['rating'] ? (float)$row['rating'] : null,
+                "id" => $row['id'],
+            ];
+        }
+        $count += 1;
     }
 
     return $result;
@@ -32,6 +44,7 @@ function getDishesInfo($requestData): array
 function getPaginationInfo($requestData): stdClass
 {
     global $link;
+    global $pageSize;
     $result = new stdClass();
     $parameters = $requestData->parameters;
     $pageNumber = $parameters['page'] ?? null;
@@ -41,8 +54,12 @@ function getPaginationInfo($requestData): stdClass
     $countArray = pg_fetch_assoc(pg_query($link, $sqlQuery));
     $amountOfElements = $countArray['count'];
 
-    $result->size = 5;
-    $result->count = (int)($amountOfElements / 5) + 1;
+    $result->size = $pageSize;
+    $count = (int)($amountOfElements / 5);
+    if ($count != $amountOfElements / 5) {
+        $count += 1;
+    }
+    $result->count = $count;
     if ($pageNumber == null) {
         $result->current = 1;
     } else {
@@ -76,17 +93,14 @@ function sqlQueryGenerator($parameters, $selectableString): string
 
         $sqlQuery = $sqlQuery . $addingString;
 
-        if ($sortingType != null && $selectableString != "count(*)") {
-            $sqlQuery = $sqlQuery . getCorrectSortingString($sortingType);
-        }
     } else {
         if ($isVegetarian != null) {
             $sqlQuery = $sqlQuery . " where ";
             $sqlQuery = $sqlQuery . "(vegetarian = '$isVegetarian')";
         }
-        if ($sortingType != null && $selectableString != "count(*)") {
-            $sqlQuery = $sqlQuery . getCorrectSortingString($sortingType);
-        }
+    }
+    if ($sortingType != null && $selectableString != "count(*)") {
+        $sqlQuery = $sqlQuery . getCorrectSortingString($sortingType);
     }
 
     return $sqlQuery;
@@ -138,6 +152,24 @@ function getCorrectDishParametersError($requestData): bool
         return true;
     } else {
         return true;
+    }
+}
+
+function checkDishIdExisting($id): bool
+{
+    global $link;
+    $regex = "/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i";
+    if (preg_match($regex, $id)) {
+
+        if (pg_fetch_assoc(
+            pg_query($link, "select id from dishes where id = '$id'")
+        )) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
     }
 
 }

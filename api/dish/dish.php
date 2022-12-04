@@ -50,22 +50,4 @@ function route($method, $urlList, $requestData): void
     }
 }
 
-function checkDishIdExisting($id): bool
-{
-    global $link;
-    $regex = "/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i";
-    if (preg_match($regex, $id)) {
-
-        if (pg_fetch_assoc(
-            pg_query($link, "select id from dishes where id = '$id'")
-        )) {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
-
-}
 

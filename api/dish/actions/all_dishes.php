@@ -21,3 +21,4 @@ function checkPaginationCorrectness($pagination): bool {
         return true;
     }
 }
+
