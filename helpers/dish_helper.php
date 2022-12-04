@@ -2,7 +2,8 @@
 
 require_once "helpers/database_helper.php";
 
-function getDishesInfo($requestData): array {
+function getDishesInfo($requestData): array
+{
     global $link;
     $parameters = $requestData->parameters;
     $sqlQuery = sqlQueryGenerator($parameters, "*");
@@ -12,14 +13,14 @@ function getDishesInfo($requestData): array {
 
     while ($row = pg_fetch_assoc($data)) {
         $isVegetarian = $row['vegetarian'] == 't';
-        $dishRating = countDishRating($row['id']);
+
         $result[] = [
             "name" => $row['name'],
             "description" => $row['description'],
-            "price" => $row['price'],
+            "price" => (float)$row['price'],
             "vegetarian" => $isVegetarian,
             "category" => $row['category'],
-            "rating" => $dishRating,
+            "rating" => $row['rating'] ? (float)$row['rating'] : null,
             "id" => $row['id'],
         ];
     }
@@ -27,13 +28,6 @@ function getDishesInfo($requestData): array {
     return $result;
 }
 
-function countDishRating($dishId): float {
-    global $link;
-    $result = pg_fetch_assoc(
-        pg_query($link, "select avg(rating.rating) from rating where dish_id = '$dishId'")
-    );
-    return $result['avg'] ?? 0.0;
-}
 
 function getPaginationInfo($requestData): stdClass
 {
@@ -41,7 +35,6 @@ function getPaginationInfo($requestData): stdClass
     $result = new stdClass();
     $parameters = $requestData->parameters;
     $pageNumber = $parameters['page'] ?? null;
-
     $sqlQuery = sqlQueryGenerator($parameters, "count(*)");
     //echo $sqlQuery . PHP_EOL;
 
@@ -50,7 +43,11 @@ function getPaginationInfo($requestData): stdClass
 
     $result->size = 5;
     $result->count = (int)($amountOfElements / 5) + 1;
-    $result->current = ($pageNumber ?? 1);
+    if ($pageNumber == null) {
+        $result->current = 1;
+    } else {
+        $result->current = (int)$pageNumber;
+    }
 
     return $result;
 }
@@ -59,6 +56,7 @@ function sqlQueryGenerator($parameters, $selectableString): string
 {
     $categories = $parameters['category'] ?? null;
     $isVegetarian = $parameters['vegetarian'] ?? null;
+    $sortingType = $parameters['sorting'] ?? null;
 
     $sqlQuery = "select $selectableString from dishes";
 
@@ -77,14 +75,40 @@ function sqlQueryGenerator($parameters, $selectableString): string
         $addingString = $addingString . "))";
 
         $sqlQuery = $sqlQuery . $addingString;
+
+        if ($sortingType != null && $selectableString != "count(*)") {
+            $sqlQuery = $sqlQuery . getCorrectSortingString($sortingType);
+        }
     } else {
         if ($isVegetarian != null) {
             $sqlQuery = $sqlQuery . " where ";
             $sqlQuery = $sqlQuery . "(vegetarian = '$isVegetarian')";
         }
+        if ($sortingType != null && $selectableString != "count(*)") {
+            $sqlQuery = $sqlQuery . getCorrectSortingString($sortingType);
+        }
     }
 
     return $sqlQuery;
 
+}
+
+function getCorrectSortingString($sortingType): string
+{
+    if ($sortingType == "NameAsc") {
+        return " order by name ASC nulls first";
+    } else if ($sortingType == "NameDesc") {
+        return " order by name DESC nulls last";
+    } else if ($sortingType == "PriceAsc") {
+        return " order by price ASC nulls first";
+    } else if ($sortingType == "PriceDesc") {
+        return " order by price DESC nulls last";
+    } else if ($sortingType == "RatingAsc") {
+        return " order by rating ASC nulls first";
+    } else if ($sortingType == "RatingDesc") {
+        return " order by rating DESC nulls last";
+    } else {
+        return "";
+    }
 }
 

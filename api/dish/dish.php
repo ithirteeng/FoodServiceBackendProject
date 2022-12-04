@@ -9,7 +9,7 @@ function route($method, $urlList, $requestData): void
 {
     if (count($urlList) == 2) {
         if ($method == "GET") {
-            getDishesData($requestData);
+           getDishesData($requestData);
         } else {
             setHttpStatus("405", "Method " . $method . " is not allowed");
         }
@@ -71,8 +71,21 @@ function checkDishIdExisting($id): bool
 function getDishesData($requestData): void
 {
     $result = new stdClass();
-    $result->dishes = getDishesInfo($requestData);
-    $result->pagination = getPaginationInfo($requestData);
-    echo json_encode($result);
+    $pagination = getPaginationInfo($requestData);
+    if (checkPaginationCorrectness($pagination)) {
+        $result->dishes = getDishesInfo($requestData);
+        $result->pagination = $pagination;
+        echo json_encode($result);
+    }
+}
 
+function checkPaginationCorrectness($pagination): bool {
+    $currentPage = $pagination->current;
+    $amountOfPages = $pagination->count;
+    if ($currentPage == 0 || $currentPage > $amountOfPages) {
+        setHttpStatus("400", "page is incorrect");
+        return false;
+    } else {
+        return true;
+    }
 }
