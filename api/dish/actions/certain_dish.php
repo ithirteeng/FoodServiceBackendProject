@@ -12,20 +12,9 @@ function checkRequestMethods($method): bool
 
 function getData($id): void
 {
-    $authorization = getallheaders()["Authorization"];
-    $token = explode(" ", $authorization)[1];
-
-    if (checkIfTokenIsExpired($token)) {
-        setHttpStatus("401", "The token has expired");
-        addTokenToBlackList($token);
-    } else if (checkIfTokenInBlackList($token)) {
-        setHttpStatus("401", "User is unauthorized");
+    if (checkDishIdExisting($id)) {
+        echo json_encode(getDishInfo($id));
     } else {
-        if (checkDishIdExisting($id)) {
-            echo json_encode(getDishInfo($id));
-        } else {
-            setHttpStatus("404", "Dishes with this id do not exist");
-        }
+        setHttpStatus("404", "Dishes with this id do not exist");
     }
-
 }
