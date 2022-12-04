@@ -70,7 +70,9 @@ function checkDishIdExisting($id): bool
 
 function getDishesData($requestData): void
 {
-    $parameters = $requestData->parameters;
-    getPagesInfo($requestData);
+    $result = new stdClass();
+    $result->dishes = getDishesInfo($requestData);
+    $result->pagination = getPaginationInfo($requestData);
+    echo json_encode($result);
 
 }
