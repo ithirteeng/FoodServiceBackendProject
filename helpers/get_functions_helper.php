@@ -19,7 +19,6 @@ function getRequestMethod()
 function getQueryParams(): array
 {
     $url = $_SERVER['QUERY_STRING'];
-    //echo $url . PHP_EOL;
     $data = explode("&", $url);
     $result = [];
     $count = 0;
