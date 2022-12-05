@@ -24,6 +24,7 @@ function postData($requestData, $id): void
     } else {
         if (checkDishIdExisting($id)) {
             setRatingForDish($requestData, getEmailFromToken($token), $id);
+            setHttpStatus("200", "Rating has been set");
         } else {
             setHttpStatus("404", "Dishes with this id do not exist");
         }
