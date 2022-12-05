@@ -200,7 +200,6 @@ function checkUserRatingExiting($email, $dishId): bool
     } else {
         return false;
     }
-    return false;
 }
 
 function setRatingForDish($requestData, $email, $dishId): void
