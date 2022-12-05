@@ -2,7 +2,7 @@
 
 require_once "helpers/jwt_helper.php";
 require_once "helpers/dish_helper.php";
-
+require_once "helpers/user_helper.php";
 
 function checkRequestMethods($method): bool
 {

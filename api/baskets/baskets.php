@@ -19,7 +19,7 @@ function route($method, $urlList, $requestData): void
             if ($method == "POST") {
                 postData($urlList[3]);
             } else if ($method == "DELETE") {
-                deleteData($urlList[3]);
+                deleteData($requestData, $urlList[3]);
             } else {
                 setHttpStatus("405", "Method " . $method . " is not allowed");
             }

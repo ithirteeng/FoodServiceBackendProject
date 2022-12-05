@@ -33,9 +33,10 @@ function getBasketData($userId): array
     return $result;
 }
 
-function checkIfDishInBasket($dishId): bool {
+function checkIfDishInBasket($dishId, $userId): bool
+{
     global $link;
-    $data = pg_query($link, "select dish_id from basket where dish_id = '$dishId'");
+    $data = pg_query($link, "select dish_id from basket where (dish_id = '$dishId' and user_id = '$userId' and order_id is null)");
     if (!pg_fetch_assoc($data)) {
         return false;
     } else {
@@ -43,7 +44,15 @@ function checkIfDishInBasket($dishId): bool {
     }
 }
 
-function checkIfDishHasOrderId($dishId): bool {
+function getDishAmount($dishId, $userId): int
+{
+    global $link;
+    $data = pg_query($link, "select amount from basket where (dish_id = '$dishId' and user_id = '$userId' and order_id is null)");
+    return pg_fetch_assoc($data)['amount'];
+}
+
+function checkIfDishHasOrderId($dishId): bool
+{
     global $link;
     $data = pg_query($link, "select order_id from basket where dish_id = '$dishId'");
     $tableRow = pg_fetch_assoc($data);

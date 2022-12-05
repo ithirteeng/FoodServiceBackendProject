@@ -1,6 +1,7 @@
 <?php
 require_once "helpers/basket_helper.php";
 require_once "helpers/http_status_helper.php";
+require_once "helpers/user_helper.php";
 
 function getData(): void
 {
