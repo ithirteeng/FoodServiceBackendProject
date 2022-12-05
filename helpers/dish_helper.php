@@ -200,5 +200,35 @@ function checkUserRatingExiting($email, $dishId): bool
     } else {
         return false;
     }
+    return false;
+}
+
+function setRatingForDish($requestData, $email, $dishId): void
+{
+
+    global $link;
+    $data = pg_query($link, "select id from users where email = '$email'");
+    $tableRow = pg_fetch_assoc($data);
+    $userId = $tableRow['id'];
+
+    $ratingScore = $requestData->parameters['ratingScore'] ?? null;
+    if ($ratingScore != null) {
+        if (!($ratingScore > 0.0 and $ratingScore < 10.0)) {
+            setHttpStatus("404", "ratingScore must be between 0 and 10");
+        } else {
+            if (checkUserRatingExiting($email, $dishId)) {
+                pg_query($link, "update rating set
+                                                rating = $ratingScore
+                                        where user_id = '$userId' and dish_id = '$dishId'");
+            } else {
+                pg_query($link, "insert into rating (dish_id, user_id, rating) 
+                                        values ('$dishId', '$userId', $ratingScore)");
+            }
+
+        }
+    } else {
+        setHttpStatus("404", "ratingScore is forgotten");
+    }
+
 }
 

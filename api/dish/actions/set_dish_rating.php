@@ -1,4 +1,6 @@
 <?php
+require_once "helpers/jwt_helper.php";
+require_once "helpers/dish_helper.php";
 function checkRequestMethods($method): bool
 {
     if ($method != "POST") {
@@ -11,9 +13,19 @@ function checkRequestMethods($method): bool
 
 function postData($requestData, $id): void
 {
-    if (checkDishIdExisting($id)) {
-        echo json_encode(getDishInfo($id));
+    $authorization = getallheaders()["Authorization"];
+    $token = explode(" ", $authorization)[1];
+
+    if (checkIfTokenIsExpired($token)) {
+        setHttpStatus("401", "The token has expired");
+        addTokenToBlackList($token);
+    } else if (checkIfTokenInBlackList($token)) {
+        setHttpStatus("401", "User is unauthorized");
     } else {
-        setHttpStatus("404", "Dishes with this id do not exist");
+        if (checkDishIdExisting($id)) {
+            setRatingForDish($requestData, getEmailFromToken($token), $id);
+        } else {
+            setHttpStatus("404", "Dishes with this id do not exist");
+        }
     }
 }

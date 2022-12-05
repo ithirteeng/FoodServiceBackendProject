@@ -26,8 +26,7 @@ function getData($id): void
         setHttpStatus("401", "User is unauthorized");
     } else {
         if (checkDishIdExisting($id)) {
-            $email = getEmailFromToken($token);
-            if (checkUserRatingExiting($email, $id)) {
+            if (checkUserRatingExiting(getEmailFromToken($token), $id)) {
                 echo "false";
             } else {
                 echo "true";
