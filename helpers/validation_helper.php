@@ -89,12 +89,12 @@ function checkDateValidity($date, $format = 'Y-m-d\TH:i:s'): bool
     }
 }
 
-function checkDateRangeValidity($date): bool {
+function checkDateRangeValidity($date): bool
+{
     $nowadays = new DateTime();
     $oldDate = new DateTime("01/01/1900");
     return $date >= $oldDate && $date < $nowadays;
 }
-
 
 
 function checkPhoneNumberValidity($phoneNumber): bool
@@ -125,4 +125,10 @@ function checkEmailValidity($email): bool
 function checkGenderValidity($gender): bool
 {
     return ($gender == 'Male' or $gender == 'Female') and strlen($gender) >= 4;
+}
+
+function convertDateToCorrectForm($birthDate): string
+{
+    $result = str_replace(' ', 'T', $birthDate);
+    return $result . ".000Z";
 }

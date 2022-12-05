@@ -16,12 +16,7 @@ function postData($requestData, $id): void
     $authorization = getallheaders()["Authorization"];
     $token = explode(" ", $authorization)[1];
 
-    if (checkIfTokenIsExpired($token)) {
-        setHttpStatus("401", "The token has expired");
-        addTokenToBlackList($token);
-    } else if (checkIfTokenInBlackList($token)) {
-        setHttpStatus("401", "User is unauthorized");
-    } else {
+    if (checkUserToken($token)) {
         if (checkDishIdExisting($id)) {
             setRatingForDish($requestData, getEmailFromToken($token), $id);
             setHttpStatus("200", "Rating has been set");

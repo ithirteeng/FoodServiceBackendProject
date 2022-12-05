@@ -4,6 +4,7 @@ require_once "helpers/jwt_helper.php";
 require_once "helpers/database_helper.php";
 require_once "helpers/http_status_helper.php";
 require_once "helpers/validation_helper.php";
+require_once "helpers/user_helper.php";
 
 function checkRequestMethods($method): void
 {
@@ -19,12 +20,7 @@ function getData(): void
     $authorization = getallheaders()["Authorization"];
     $token = explode(" ", $authorization)[1];
 
-    if (checkIfTokenIsExpired($token)) {
-        setHttpStatus("401", "The token has expired");
-        addTokenToBlackList($token);
-    } else if (checkIfTokenInBlackList($token)) {
-        setHttpStatus("401", "User is unauthorized");
-    } else {
+    if (checkUserToken($token)) {
         $email = getEmailFromToken($token);
         $profileData = pg_query($link, "select * from users where email = '$email'");
         $responseData = [];
@@ -43,12 +39,6 @@ function getData(): void
     }
 }
 
-function convertDateToCorrectForm($birthDate): string
-{
-    $result = str_replace(' ', 'T', $birthDate);
-    return $result . ".000Z";
-}
-
 function putData($requestData): void
 {
     global $link;
@@ -56,12 +46,7 @@ function putData($requestData): void
     $authorization = getallheaders()["Authorization"];
     $token = explode(" ", $authorization)[1];
 
-    if (checkIfTokenIsExpired($token)) {
-        setHttpStatus("401", "The token has expired");
-        addTokenToBlackList($token);
-    } else if (checkIfTokenInBlackList($token)) {
-        setHttpStatus("401", "User is unauthorized");
-    } else {
+    if (checkUserToken($token)) {
         if (getProfileDataValidationResult($requestData)) {
             $email = getEmailFromToken($token);
             $fullName = $requestData->body->fullName;
