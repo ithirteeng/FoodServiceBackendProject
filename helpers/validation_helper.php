@@ -19,7 +19,7 @@ function getRegistrationValidationResult($requestData): bool
     } else if (!checkEmailValidity($email)) {
         setHttpStatus("400", "Email must be in format example@example.com");
         return false;
-    } else if (!checkDateValidity($birthdate)) {
+    } else if (!checkDateValidity($birthdate, true)) {
         setHttpStatus("400", "Date must be empty/null or in other format and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkGenderValidity($gender)) {
@@ -46,7 +46,7 @@ function getProfileDataValidationResult($requestData): bool
     } else if (!checkGenderValidity($gender)) {
         setHttpStatus("400", "Gender must be Male or Female");
         return false;
-    } else if (!checkDateValidity($birthdate)) {
+    } else if (!checkDateValidity($birthdate, true)) {
         setHttpStatus("400", "Date must be empty/null or in other format and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkPhoneNumberValidity($phoneNumber)) {
@@ -67,8 +67,9 @@ function checkFullnameValidity($fullname): bool
     }
 }
 
-function checkDateValidity($date, $format = 'Y-m-d\TH:i:s'): bool
+function checkDateValidity($date, $isDateBirthday): bool
 {
+    $format = 'Y-m-d\TH:i:s';
     $secondFormat = 'Y-m-d';
     if ($date == null) {
         return true;
@@ -80,14 +81,26 @@ function checkDateValidity($date, $format = 'Y-m-d\TH:i:s'): bool
         $d3 = DateTime::createFromFormat(DATE_RFC3339_EXTENDED, $date);
 
         if ($d && $d->format($format) == $date) {
-            return checkDateRangeValidity($d);
+            if ($isDateBirthday) {
+                return checkBirthDateRangeValidity($d);
+            } else {
+                return false;
+            }
         } else if ($d2 && $d2->format($secondFormat) == $date) {
-            return checkDateRangeValidity($d2);
+            if ($isDateBirthday) {
+                return checkBirthDateRangeValidity($d2);
+            } else {
+                return false;
+            }
         } else {
             if ($d3) {
                 $datePart = explode("+", $d3->format(DATE_RFC3339_EXTENDED))[0] . "Z";
                 if ($datePart == $date) {
-                    return true;
+                    if ($isDateBirthday) {
+                        return checkBirthDateRangeValidity($d3);
+                    } else {
+                        return true;
+                    }
                 } else {
                     return false;
                 }
@@ -98,7 +111,7 @@ function checkDateValidity($date, $format = 'Y-m-d\TH:i:s'): bool
     }
 }
 
-function checkDateRangeValidity($date): bool
+function checkBirthDateRangeValidity($date): bool
 {
     $nowadays = new DateTime();
     $oldDate = new DateTime("01/01/1900");
@@ -144,7 +157,7 @@ function convertDateToCorrectForm($birthDate): string
         $result = $result . ".000Z";
     } else {
         if (strlen($part) == 3) {
-            $result = $result."Z";
+            $result = $result . "Z";
         } else if (strlen($part) == 2) {
             $result = $result . "0Z";
         } else if (strlen($part) == 1) {
