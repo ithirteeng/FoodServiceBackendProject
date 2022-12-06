@@ -1,4 +1,7 @@
 <?php
+
+require_once "helpers/http_status_helper.php";
+
 function route($method, $urlList, $requestData): void
 {
     if (count($urlList) == 2) {
@@ -7,13 +10,13 @@ function route($method, $urlList, $requestData): void
             if ($method == "POST") {
                 postData($requestData);
             } else {
-                getData($requestData);
+                getData();
             }
         }
     } else if (count($urlList) == 3) {
         require_once "actions/order_info.php";
         if (checkRequestMethods($method)) {
-            getData($requestData, $urlList[2]);
+            getData($urlList[2]);
         }
     } else if (count($urlList) == 4) {
         if ($urlList[3] == "check") {
