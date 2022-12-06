@@ -1,10 +1,10 @@
 <?php
-function checkOrderIdExisting($orderId): bool
+function checkOrderIdExisting($orderId, $userId): bool
 {
     global $link;
     $regex = "/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i";
     if (preg_match($regex, $orderId)) {
-        if (pg_fetch_assoc(pg_query($link, "select id from \"order\" where id = '$orderId'"))) {
+        if (pg_fetch_assoc(pg_query($link, "select id from \"order\" where id = '$orderId' and user_id = '$userId'"))) {
             return true;
         } else {
             return false;
@@ -21,3 +21,4 @@ function getUserIdByToken($token): string
     $userData = pg_query($link, "select id from users where email = '$email'");
     return pg_fetch_assoc($userData)['id'];
 }
+

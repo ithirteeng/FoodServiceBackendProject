@@ -18,7 +18,8 @@ function postData($orderId): void
     $token = explode(" ", $authorization)[1];
 
     if (checkUserToken($token)) {
-        if (checkOrderIdExisting($orderId)) {
+        $userId = getUserIdByToken($token);
+        if (checkOrderIdExisting($orderId, $userId)) {
             $isDeliveryConfirmed = pg_fetch_assoc(pg_query($link, "select status from \"order\" where id = '$orderId'"))['status'];
             if ($isDeliveryConfirmed == "Delivered") {
                 setHttpStatus("400", "Order has already been delivered");

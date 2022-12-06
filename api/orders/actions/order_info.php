@@ -23,8 +23,9 @@ function getData($orderId): void
     $token = explode(" ", $authorization)[1];
 
     if (checkUserToken($token)) {
-        if (checkOrderIdExisting($orderId)) {
-            $data = pg_query($link, "select * from \"order\" where id = '$orderId'");
+        $userId = getUserIdByToken($token);
+        if (checkOrderIdExisting($orderId, $userId)) {
+            $data = pg_query($link, "select * from \"order\" where id = '$orderId' and user_id = '$userId'");
             $result = array();
             while ($orderRow = pg_fetch_assoc($data)) {
                 $dish_data = pg_query($link, "select amount, dish_id, price, name, image from basket
