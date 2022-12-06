@@ -8,3 +8,7 @@ function checkRequestMethods($method): bool {
         return false;
     }
 }
+
+function postData($requestData, $orderId): void {
+
+}

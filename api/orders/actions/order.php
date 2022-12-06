@@ -8,3 +8,13 @@ function checkRequestMethods($method): bool
         return false;
     }
 }
+
+function getData($requestData): void
+{
+
+}
+
+function postData($requestData): void
+{
+
+}
