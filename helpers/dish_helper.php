@@ -184,7 +184,6 @@ function checkDishIdExisting($id): bool
     } else {
         return false;
     }
-
 }
 
 function checkUserRatingExiting($email, $dishId): bool

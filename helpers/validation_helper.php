@@ -20,7 +20,7 @@ function getRegistrationValidationResult($requestData): bool
         setHttpStatus("400", "Email must be in format example@example.com");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD and lie in the range of 01.01.1900 and our time");
+        setHttpStatus("400", "Date must be empty/null or in other format and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkGenderValidity($gender)) {
         setHttpStatus("400", "Gender must be Male or Female");
@@ -47,7 +47,7 @@ function getProfileDataValidationResult($requestData): bool
         setHttpStatus("400", "Gender must be Male or Female");
         return false;
     } else if (!checkDateValidity($birthdate)) {
-        setHttpStatus("400", "Date must be empty/null or in format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD and lie in the range of 01.01.1900 and our time");
+        setHttpStatus("400", "Date must be empty/null or in other format and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkPhoneNumberValidity($phoneNumber)) {
         setHttpStatus("400", "Phone must be empty/null or in correct form");
@@ -77,14 +77,23 @@ function checkDateValidity($date, $format = 'Y-m-d\TH:i:s'): bool
     } else {
         $d = DateTime::createFromFormat($format, $date);
         $d2 = DateTime::createFromFormat($secondFormat, $date);
-
+        $d3 = DateTime::createFromFormat(DATE_RFC3339_EXTENDED, $date);
 
         if ($d && $d->format($format) == $date) {
             return checkDateRangeValidity($d);
         } else if ($d2 && $d2->format($secondFormat) == $date) {
             return checkDateRangeValidity($d2);
         } else {
-            return false;
+            if ($d3) {
+                $datePart = explode("+", $d3->format(DATE_RFC3339_EXTENDED))[0] . "Z";
+                if ($datePart == $date) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
     }
 }
@@ -130,5 +139,19 @@ function checkGenderValidity($gender): bool
 function convertDateToCorrectForm($birthDate): string
 {
     $result = str_replace(' ', 'T', $birthDate);
-    return $result . ".000Z";
+    $part = explode(".", $result)[1] ?? null;
+    if ($part == null) {
+        $result = $result . ".000Z";
+    } else {
+        if (strlen($part) == 3) {
+            $result = $result."Z";
+        } else if (strlen($part) == 2) {
+            $result = $result . "0Z";
+        } else if (strlen($part) == 1) {
+            $result = $result . "00Z";
+        }
+    }
+    echo json_encode($result) . PHP_EOL;
+
+    return $result;
 }
