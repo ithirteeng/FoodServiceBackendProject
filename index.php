@@ -18,6 +18,8 @@ if ($router == "basket") {
     $router = "baskets";
 } else if ($router == "dish") {
     $router = "dishes";
+} else if ($router == "order") {
+    $router = "orders";
 }
 $filename = realpath(dirname(__FILE__)) . "/" . $urlList[0] . "/" . $router . "/" . $router . ".php";
 
