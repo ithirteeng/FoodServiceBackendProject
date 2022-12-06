@@ -1,6 +1,8 @@
 <?php
 
 require_once "helpers/http_status_helper.php";
+require_once "helpers/user_helper.php";
+require_once "helpers/order_helper.php";
 
 function route($method, $urlList, $requestData): void
 {
@@ -19,10 +21,10 @@ function route($method, $urlList, $requestData): void
             getData($urlList[2]);
         }
     } else if (count($urlList) == 4) {
-        if ($urlList[3] == "check") {
+        if ($urlList[3] == "status") {
             require_once "actions/order_status.php";
             if (checkRequestMethods($method)) {
-                postData($requestData, $urlList[2]);
+                postData($urlList[2]);
             }
         } else {
             setHttpStatus("404", "The page you are looking for can't be found");
