@@ -18,7 +18,7 @@ function getBasketData($userId): array
     $data = pg_query($link, "select *
                                     from dishes 
                                     inner join basket on dishes.id = basket.dish_id
-                                    where basket.user_id = '$userId'");
+                                    where basket.user_id = '$userId' and order_id is null");
     while ($row = pg_fetch_assoc($data)) {
         $totalPrice = (float)$row['price'] * (int)$row['amount'];
         $result[] = [

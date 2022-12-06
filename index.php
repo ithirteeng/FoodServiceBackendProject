@@ -4,6 +4,7 @@ require_once "./helpers/database_helper.php";
 require_once "./helpers/get_functions_helper.php";
 require_once "./helpers/http_status_helper.php";
 
+date_default_timezone_set("Asia/Krasnoyarsk");
 header('Content-type: application/json');
 
 $url = $_GET['q'] ?? "";

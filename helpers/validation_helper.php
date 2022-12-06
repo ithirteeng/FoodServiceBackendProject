@@ -3,12 +3,12 @@ require_once "http_status_helper.php";
 
 function getRegistrationValidationResult($requestData): bool
 {
-    $fullName = $requestData->body->fullName;
-    $password = $requestData->body->password;
-    $email = $requestData->body->email;
-    $birthdate = $requestData->body->birthDate;
-    $gender = $requestData->body->gender;
-    $phoneNumber = $requestData->body->phoneNumber;
+    $fullName = $requestData->body->fullName ?? null;
+    $password = $requestData->body->password ?? null;
+    $email = $requestData->body->email ?? null;
+    $birthdate = $requestData->body->birthDate ?? null;
+    $gender = $requestData->body->gender ?? null;
+    $phoneNumber = $requestData->body->phoneNumber ?? null;
 
     if (!checkFullnameValidity($fullName)) {
         setHttpStatus("400", "Fullname must contain only letters and consist minimum of at least 2 words");
@@ -35,10 +35,10 @@ function getRegistrationValidationResult($requestData): bool
 
 function getProfileDataValidationResult($requestData): bool
 {
-    $fullName = $requestData->body->fullName;
-    $birthdate = $requestData->body->birthDate;
-    $gender = $requestData->body->gender;
-    $phoneNumber = $requestData->body->phoneNumber;
+    $fullName = $requestData->body->fullName ?? null;
+    $birthdate = $requestData->body->birthDate ?? null;
+    $gender = $requestData->body->gender ?? null;
+    $phoneNumber = $requestData->body->phoneNumber ?? null;
 
     if (!checkFullnameValidity($fullName)) {
         setHttpStatus("400", "Fullname must contain only letters and consist minimum of at least 2 words");
@@ -57,6 +57,27 @@ function getProfileDataValidationResult($requestData): bool
     }
 }
 
+function getOrderValidationError($requestData): bool
+{
+    $deliveryTime = $requestData->body->deliveryTime ?? null;
+    $address = $requestData->body->address ?? null;
+
+    if (!checkDateValidity($deliveryTime, false)) {
+        setHttpStatus("400", "deliveryTime mustn't be null/empty and must be correct and at least an hour greater than orderTime");
+        return false;
+    } else if (!checkAddressValidity($address)) {
+        setHttpStatus("400", "address is invalid");
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function checkAddressValidity($address): bool
+{
+    return $address != null and $address != "";
+}
+
 function checkFullnameValidity($fullname): bool
 {
     $regex = "/^[a-zA-ZА-я]+([-']?[a-zA-ZА-я]]+)*(\s[a-zA-ZА-я]([-']?[a-zA-ZА-я]+)*)+$/ui";
@@ -72,19 +93,26 @@ function checkDateValidity($date, $isDateBirthday): bool
     $format = 'Y-m-d\TH:i:s';
     $secondFormat = 'Y-m-d';
     if ($date == null) {
-        return true;
+        if ($isDateBirthday) {
+            return true;
+        } else {
+            return false;
+        }
     } else if ($date == "") {
-        return true;
+        if ($isDateBirthday) {
+            return true;
+        } else {
+            return false;
+        }
     } else {
         $d = DateTime::createFromFormat($format, $date);
         $d2 = DateTime::createFromFormat($secondFormat, $date);
-        $d3 = DateTime::createFromFormat(DATE_RFC3339_EXTENDED, $date);
 
         if ($d && $d->format($format) == $date) {
             if ($isDateBirthday) {
                 return checkBirthDateRangeValidity($d);
             } else {
-                return false;
+                return checkDeliveryDateValidity($d);
             }
         } else if ($d2 && $d2->format($secondFormat) == $date) {
             if ($isDateBirthday) {
@@ -93,13 +121,16 @@ function checkDateValidity($date, $isDateBirthday): bool
                 return false;
             }
         } else {
+            $d3 = DateTime::createFromFormat(DATE_RFC3339_EXTENDED, $date);
             if ($d3) {
+                $d3->setTimezone(new DateTimeZone("Asia/Krasnoyarsk"));
+                $d3->modify("-7 hours");
                 $datePart = explode("+", $d3->format(DATE_RFC3339_EXTENDED))[0] . "Z";
                 if ($datePart == $date) {
                     if ($isDateBirthday) {
                         return checkBirthDateRangeValidity($d3);
                     } else {
-                        return true;
+                        return checkDeliveryDateValidity($d3);
                     }
                 } else {
                     return false;
@@ -116,6 +147,13 @@ function checkBirthDateRangeValidity($date): bool
     $nowadays = new DateTime();
     $oldDate = new DateTime("01/01/1900");
     return $date >= $oldDate && $date < $nowadays;
+}
+
+function checkDeliveryDateValidity($date): bool
+{
+    $nowadays = new DateTime();
+    $nowadays->modify('+1 hour');
+    return $date >= $nowadays;
 }
 
 
@@ -164,7 +202,7 @@ function convertDateToCorrectForm($birthDate): string
             $result = $result . "00Z";
         }
     }
-    echo json_encode($result) . PHP_EOL;
+//    echo json_encode($result) . PHP_EOL;
 
     return $result;
 }
