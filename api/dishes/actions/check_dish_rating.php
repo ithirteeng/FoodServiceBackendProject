@@ -24,7 +24,6 @@ function getData($dishId): void
             echo "false";
         } else {
             $userId = getUserIdByToken($token);
-            echo $userId . PHP_EOL;
             if (canUserSetRating($userId, $dishId)) {
                 echo "true";
             } else {

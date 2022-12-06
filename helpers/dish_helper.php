@@ -186,14 +186,6 @@ function checkDishIdExisting($id): bool
     }
 }
 
-function getUserIdByToken($token): string
-{
-    global $link;
-    $email = getEmailFromToken($token);
-    $userData = pg_query($link, "select id from users where email = '$email'");
-    return pg_fetch_assoc($userData)['id'];
-}
-
 function canUserSetRating($userId, $dishId): bool
 {
     global $link;

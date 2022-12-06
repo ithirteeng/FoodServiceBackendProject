@@ -13,15 +13,19 @@ function checkRequestMethods($method): bool
     }
 }
 
-function postData($requestData, $id): void
+function postData($requestData, $dishId): void
 {
     $authorization = getallheaders()["Authorization"];
     $token = explode(" ", $authorization)[1];
 
     if (checkUserToken($token)) {
-        if (checkDishIdExisting($id)) {
-            setRatingForDish($requestData, getEmailFromToken($token), $id);
-            setHttpStatus("200", "Rating has been set");
+        if (checkDishIdExisting($dishId)) {
+            if (canUserSetRating(getUserIdByToken($token), $dishId)) {
+                setRatingForDish($requestData, getEmailFromToken($token), $dishId);
+                setHttpStatus("200", "Rating has been set");
+            } else {
+                setHttpStatus("400", "Rating can't be put because user didn't order this dish");
+            }
         } else {
             setHttpStatus("404", "Dishes with this id do not exist");
         }

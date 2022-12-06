@@ -3,14 +3,6 @@
 require_once "helpers/database_helper.php";
 require_once "jwt_helper.php";
 
-function getUserIdByToken($token): string
-{
-    global $link;
-    $email = getEmailFromToken($token);
-    $userData = pg_query($link, "select id from users where email = '$email'");
-    return pg_fetch_assoc($userData)['id'];
-}
-
 function getBasketData($userId): array
 {
     global $link;
@@ -49,16 +41,4 @@ function getDishAmount($dishId, $userId): int
     global $link;
     $data = pg_query($link, "select amount from basket where (dish_id = '$dishId' and user_id = '$userId' and order_id is null)");
     return pg_fetch_assoc($data)['amount'];
-}
-
-function checkIfDishHasOrderId($dishId): bool
-{
-    global $link;
-    $data = pg_query($link, "select order_id from basket where dish_id = '$dishId'");
-    $tableRow = pg_fetch_assoc($data);
-    if ($tableRow['order_id'] == null) {
-        return false;
-    } else {
-        return true;
-    }
 }
