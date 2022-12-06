@@ -15,3 +15,14 @@ function checkUserToken($token): bool {
         return true;
     }
 }
+
+function checkUserTokenForDish($token): bool {
+    if (checkIfTokenIsExpired($token)) {
+        addTokenToBlackList($token);
+        return false;
+    } else if (checkIfTokenInBlackList($token)) {
+        return false;
+    } else {
+        return true;
+    }
+}

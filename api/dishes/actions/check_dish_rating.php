@@ -14,20 +14,25 @@ function checkRequestMethods($method): bool
     }
 }
 
-function getData($id): void
+function getData($dishId): void
 {
     $authorization = getallheaders()["Authorization"];
     $token = explode(" ", $authorization)[1];
 
-    if (checkUserToken($token)) {
-        if (checkDishIdExisting($id)) {
-            if (checkUserRatingExiting(getEmailFromToken($token), $id)) {
-                echo "false";
-            } else {
-                echo "true";
-            }
+    if (checkDishIdExisting($dishId)) {
+        if (!checkUserTokenForDish($token)) {
+            echo "false";
         } else {
-            setHttpStatus("404", "Dishes with this id do not exist");
+            $userId = getUserIdByToken($token);
+            echo $userId . PHP_EOL;
+            if (canUserSetRating($userId, $dishId)) {
+                echo "true";
+            } else {
+                echo "false";
+            }
         }
+    } else {
+        setHttpStatus("404", "Dishes with this id do not exist");
     }
+
 }

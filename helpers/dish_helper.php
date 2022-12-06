@@ -186,6 +186,28 @@ function checkDishIdExisting($id): bool
     }
 }
 
+function getUserIdByToken($token): string
+{
+    global $link;
+    $email = getEmailFromToken($token);
+    $userData = pg_query($link, "select id from users where email = '$email'");
+    return pg_fetch_assoc($userData)['id'];
+}
+
+function canUserSetRating($userId, $dishId): bool
+{
+    global $link;
+
+    $orderData = pg_query($link, "select * from \"order\" 
+                                         inner join basket b on \"order\".id = b.order_id
+                                            where b.user_id = '$userId' and b.dish_id = '$dishId' and \"order\".status = 'Delivered'");
+    if (!pg_fetch_assoc($orderData)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 function checkUserRatingExiting($email, $dishId): bool
 {
     global $link;
