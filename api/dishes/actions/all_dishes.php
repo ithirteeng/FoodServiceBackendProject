@@ -6,9 +6,10 @@ function getData($requestData): void
     $pagination = getPaginationInfo($requestData);
     if (checkPaginationCorrectness($pagination) and getCorrectDishParametersError($requestData)) {
         $result->dishes = getDishesInfo($requestData);
-        // if ($pagination->count != 0) {
         $result->pagination = $pagination;
-        //}
+        if ($pagination->count == 0) {
+            $result->pagination->current = 0;
+        }
         echo json_encode($result);
     }
 
