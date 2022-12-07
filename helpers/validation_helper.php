@@ -20,7 +20,7 @@ function getRegistrationValidationResult($requestData): bool
         setHttpStatus("400", "Email must be in format example@example.com");
         return false;
     } else if (!checkDateValidity($birthdate, true)) {
-        setHttpStatus("400", "Date must be empty/null or in other format and lie in the range of 01.01.1900 and our time");
+        setHttpStatus("400", "Date must be empty/null or in correct format (YYYY-MM-DD / YYYY-MM-DDTHH:MM:SS / YYYY-MM-DDTHH:MM:SS.vP) and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkGenderValidity($gender)) {
         setHttpStatus("400", "Gender must be Male or Female");
@@ -47,7 +47,7 @@ function getProfileDataValidationResult($requestData): bool
         setHttpStatus("400", "Gender must be Male or Female");
         return false;
     } else if (!checkDateValidity($birthdate, true)) {
-        setHttpStatus("400", "Date must be empty/null or in other format and lie in the range of 01.01.1900 and our time");
+        setHttpStatus("400", "Date must be empty/null or in correct format (YYYY-MM-DD / YYYY-MM-DDTHH:MM:SS / YYYY-MM-DDTHH:MM:SS.vP) and lie in the range of 01.01.1900 and our time");
         return false;
     } else if (!checkPhoneNumberValidity($phoneNumber)) {
         setHttpStatus("400", "Phone must be empty/null or in correct form");
@@ -63,7 +63,7 @@ function getOrderValidationError($requestData): bool
     $address = $requestData->body->address ?? null;
 
     if (!checkDateValidity($deliveryTime, false)) {
-        setHttpStatus("400", "deliveryTime mustn't be null/empty and must be correct and at least an hour greater than orderTime");
+        setHttpStatus("400", "deliveryTime mustn't be null/empty and must be in correct format (YYYY-MM-DDTHH:MM:SS / YYYY-MM-DDTHH:MM:SS.vP) and at least an hour greater than orderTime");
         return false;
     } else if (!checkAddressValidity($address)) {
         setHttpStatus("400", "address is invalid");
