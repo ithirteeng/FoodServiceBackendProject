@@ -54,10 +54,10 @@ function deleteData($requestData, $dishId): void
                     }
                 }
             } else {
-                setHttpStatus("404", "There is no such dish in the basket");
+                setHttpStatus("400", "There is no such dish in the basket");
             }
         } else {
-            setHttpStatus("404", "Dishes with this id do not exist");
+            setHttpStatus("404", "Dish with this id does not exist");
         }
     }
 }

@@ -56,7 +56,7 @@ function getData($orderId): void
             }
             echo json_encode($result);
         } else {
-            setHttpStatus("404", "Orders with this id do not exist");
+            setHttpStatus("404", "Order with this id does not exist");
         }
     }
 
