@@ -45,16 +45,18 @@ function deleteData($requestData, $dishId): void
                         } else {
                             pg_query($link, "delete from basket where (dish_id = '$dishId' and user_id = '$userId' and order_id is null)");
                         }
+
                         setHttpStatus("200", "basket updated");
                     } else if ($deleteType == "false") {
                         pg_query($link, "delete from basket where (dish_id = '$dishId' and user_id = '$userId' and order_id is null)");
+
                         setHttpStatus("200", "basket updated");
                     } else {
                         setHttpStatus("404", "'increase' parameter must be true or false");
                     }
                 }
             } else {
-                setHttpStatus("400", "There is no such dish in the basket");
+                setHttpStatus("404", "There is no such dish in the basket");
             }
         } else {
             setHttpStatus("404", "Dish with this id does not exist");
