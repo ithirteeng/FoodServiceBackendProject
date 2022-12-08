@@ -92,7 +92,7 @@ function sqlQueryGenerator($parameters, $selectableString): string
 
     if ($categories != null) {
         $sqlQuery = $sqlQuery . " where (";
-        if ($isVegetarian != null) {
+        if ($isVegetarian == "true") {
             $sqlQuery = $sqlQuery . "vegetarian = '$isVegetarian' and ";
         }
 
@@ -107,10 +107,11 @@ function sqlQueryGenerator($parameters, $selectableString): string
         $sqlQuery = $sqlQuery . $addingString;
 
     } else {
-        if ($isVegetarian != null) {
+        if ($isVegetarian == "true") {
             $sqlQuery = $sqlQuery . " where ";
             $sqlQuery = $sqlQuery . "(vegetarian = '$isVegetarian')";
         }
+
     }
     if ($sortingType != null && $selectableString != "count(*)") {
         $sqlQuery = $sqlQuery . getCorrectSortingString($sortingType);

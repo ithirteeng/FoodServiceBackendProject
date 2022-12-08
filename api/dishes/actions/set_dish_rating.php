@@ -24,7 +24,7 @@ function postData($requestData, $dishId): void
                 setRatingForDish($requestData, getEmailFromToken($token), $dishId);
                 setHttpStatus("200", "Rating has been set");
             } else {
-                setHttpStatus("400", "Rating can't be put because user didn't order this dish");
+                setHttpStatus("403", "Rating can't be put because user didn't order this dish");
             }
         } else {
             setHttpStatus("404", "Dishes with this id do not exist");
